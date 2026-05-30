@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lilith Linux — GRUB Boot Theme Live Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* Main viewport scaling simulating a 1080p monitor */
+  .viewport {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('lilith/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Boot Menu Container placed exactly at top: 30%, left: 30%, width: 40%, height: 40% */
+  .boot-menu {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    width: 40%;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Individual menu entries styled exactly as specified in theme.txt */
+  .menu-entry {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding: 5px 12px;
+    margin-bottom: 10px;
+    color: #cccccc;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+
+  /* Custom icon dimensions as specified in theme.txt (32x32) */
+  .menu-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 20px; /* item_icon_space = 20 */
+    object-fit: contain;
+  }
+
+  /* Selected state using the Whitesur stretchable glassmorphic capsule */
+  .menu-entry.selected {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Keyboard shortcut banner matching image component: top: 100%-50, centered */
+  .info-banner {
+    position: absolute;
+    bottom: 8px; /* 100% - 50px height is roughly 8px from bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 480px;
+    height: 42px;
+    background-image: url('lilith/info.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Countdown timeout label placed at top: 82%, left: 32%, width: 36% */
+  .timeout-label {
+    position: absolute;
+    top: 82%;
+    left: 32%;
+    width: 36%;
+    text-align: center;
+    color: #cccccc;
+    font-size: 16px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Instructions modal */
+  .controls-guide {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(19, 8, 7, 0.85);
+    border: 1px solid #7a0000;
+    border-radius: 6px;
+    padding: 12px 18px;
+    color: #ffcccc;
+    font-size: 12px;
+    pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    z-index: 100;
+  }
+
+  .controls-title {
+    font-weight: bold;
+    color: #ff3300;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .key {
+    background: #441111;
+    border: 1px solid #992222;
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin: 0 2px;
+    color: #ffffff;
+  }
+</style>
+</head>
+<body>
+
+<div class="viewport">
+
+  <!-- Interactive Controls Guide -->
+  <div class="controls-guide">
+    <div class="controls-title">Interactive GRUB Emulator</div>
+    <div>Use <span class="key">↑</span> <span class="key">↓</span> arrows or hover to navigate menu.</div>
+  </div>
+
+  <!-- Boot Menu Container -->
+  <div class="boot-menu" id="bootMenu">
+    <div class="menu-entry selected" onclick="selectItem(0)">
+      <img src="lilith/icons/lilith.png" class="menu-icon" alt="OS Logo">
+      <span>Lilith Linux (Kernel 6.12.0-live)</span>
+    </div>
+    <div class="menu-entry" onclick="selectItem(1)">
+      <img src="lilith/icons/linux.png" class="menu-icon" alt="OS Logo">
+      <span>Lilith Linux (Safe Mode / CLI)</span>
+    </div>
+    <div class="menu-entry" onclick="selectItem(2)">
+      <img src="lilith/icons/ubuntu.png" class="menu-icon" alt="OS Logo">
+      <span>Ubuntu 26.04 LTS (Development Build)</span>
+    </div>
+    <div class="menu-entry" onclick="selectItem(3)">
+      <img src="lilith/icons/windows.png" class="menu-icon" alt="OS Logo">
+      <span>Windows Boot Manager</span>
+    </div>
+    <div class="menu-entry" onclick="selectItem(4)">
+      <img src="lilith/icons/efi.png" class="menu-icon" alt="OS Logo">
+      <span>UEFI Firmware Settings</span>
+    </div>
+  </div>
+
+  <!-- Countdown Timeout Label -->
+  <div class="timeout-label" id="timeoutLabel">
+    Booting in 5 seconds...
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner"></div>
+
+</div>
+
+<script>
+  let currentIndex = 0;
+  const entries = document.querySelectorAll('.menu-entry');
+  const timeoutLabel = document.getElementById('timeoutLabel');
+  let seconds = 5;
+
+  // Interactivity: Arrow Keys Selection
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      selectItem((currentIndex + 1) % entries.length);
+      resetTimeout();
+    } else if (e.key === 'ArrowUp') {
+      selectItem((currentIndex - 1 + entries.length) % entries.length);
+      resetTimeout();
+    } else if (e.key === 'Enter') {
+      alert(`Booting into: ${entries[currentIndex].querySelector('span').innerText}`);
+    }
+  });
+
+  function selectItem(index) {
+    entries[currentIndex].classList.remove('selected');
+    currentIndex = index;
+    entries[currentIndex].classList.add('selected');
+  }
+
+  // Auto-countdown Simulation
+  const countdownInterval = setInterval(() => {
+    seconds--;
+    if (seconds >= 0) {
+      timeoutLabel.innerText = `Booting in ${seconds} seconds...`;
+    } else {
+      timeoutLabel.innerText = `Booting...`;
+      clearInterval(countdownInterval);
+    }
+  }, 1000);
+
+  function resetTimeout() {
+    seconds = 10; // reset countdown to 10 on user key activity
+    timeoutLabel.innerText = `Booting in ${seconds} seconds...`;
+  }
+</script>
+
+</body>
+</html>
