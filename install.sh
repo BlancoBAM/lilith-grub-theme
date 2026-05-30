@@ -6,7 +6,7 @@
 set -euo pipefail
 
 # Define variables
-THEME_NAME="whitesur"
+THEME_NAME="lilith"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 THEME_SRC="${SCRIPT_DIR}/${THEME_NAME}"
 TARGET_DIR="/boot/grub/themes"
