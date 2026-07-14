@@ -1,52 +1,77 @@
-# GRUB2 gfxmenu Linux theme
-# Designed for any resolution
+# ══════════════════════════════════════════════════════════════
+#  Lilith Linux — Revelation Edition  |  GRUB2 Boot Theme
+#  Design: ChatGPT-Lilith_Linux_Boot_Design.pdf
+#  Background: sigil in upper 65%, dark area below for panel
+#  Panel: 9-slice dark-crimson frosted glass, rounded corners
+#  Selection: ember-orange glow strip
+#  Icon: purple Lilith sigil (transparent PNG)
+# ══════════════════════════════════════════════════════════════
 
-# Global Property
-title-text: ""
+# ── Global ──────────────────────────────────────────────────────
+title-text:    ""
 desktop-image: "background.jpg"
 desktop-color: "#000000"
-terminal-font: "Terminus Regular 14"
-terminal-box: "terminal_box_*.png"
-#terminal-left: "0"
-#terminal-top: "0"
-terminal-width: "100%"
-terminal-height: "100%"
-terminal-border: "0"
 
-# Show the boot menu
+# ── Boot menu ───────────────────────────────────────────────────
+# Background sigil fills the upper ~65%; this panel sits cleanly
+# in the dark lower portion, centred horizontally.
+#
+# At 1024x768:  top=55% → y=422, height=36% → 276px
+#   4 entries × 42px + 3 gaps × 4px + 2 × 10px padding = 208px ✓
+# At 1920x1080: top=55% → y=594, height=36% → 389px (more room)
 + boot_menu {
-  left = 30%
-  top = 30%
-  width = 40%
-  height = 40%
-  item_font = "Unifont Regular 16"
-  item_color = "#cccccc"
+  left   = 22%
+  top    = 55%
+  width  = 56%
+  height = 36%
+
+  # 9-slice dark smoked-glass panel with crimson border
+  menu_pixmap_style = "panel_*.png"
+
+  # Typography — Terminus for crispness at all sizes
+  item_font          = "Terminus Regular 16"
+  selected_item_font = "Terminus Bold 16"
+
+  # Text colours
+  item_color          = "#c8c8c8"
   selected_item_color = "#ffffff"
-  icon_width = 32
-  icon_height = 32
-  item_icon_space = 20
-  item_height = 36
-  item_padding = 5
-  item_spacing = 10
+
+  # Purple Lilith sigil icon next to each entry
+  icon_width      = 40
+  icon_height     = 40
+  item_icon_space = 16
+
+  # Row sizing — tight but uncluttered
+  item_height  = 42
+  item_padding = 10
+  item_spacing  = 4
+
+  # Ember-orange glow on selected row
   selected_item_pixmap_style = "select_*.png"
+
+  # Hide scrollbar (clean look, all entries fit)
+  scrollbar = false
 }
 
-+ image {
-  top = 100%-50
-  left = 50%-240
-  width = 480
-  height = 42
-  file = "info.png"
-}
-
-# Show a countdown message using the label component
+# ── Countdown label ─────────────────────────────────────────────
+# Sits just above the panel, subdued crimson tone
 + label {
-  top = 82%
-  left = 32%
-  width = 36%
+  top   = 51%
+  left  = 22%
+  width = 56%
   align = "center"
-  id = "__timeout__"
-  text = "Booting in %d seconds"
-  color = "#cccccc"
-  font = "Unifont Regular 16"
+  id    = "__timeout__"
+  text  = "Booting in %d seconds"
+  color = "#7a2010"
+  font  = "Terminus Regular 14"
+}
+
+# ── Footer navigation hints ──────────────────────────────────────
+# Subtle single-line bar at the very bottom of screen
++ image {
+  top    = 94%
+  left   = 50%-400
+  width  = 800
+  height = 40
+  file   = "info.png"
 }
